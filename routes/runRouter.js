@@ -12,6 +12,7 @@ runRouter.post('/', async (req, res) => {
         status: 'running',
       },
     });
+
     res.json(newRun);
   } catch (error) {
     console.error(error);
@@ -26,7 +27,12 @@ runRouter.get('/', async (req, res) => {
         status: 'finished',
       },
     });
-    res.json(runs);
+    const sortedRuns = runs.sort((a, b) => {
+      const durationA = new Date(a.end).getTime() - new Date(a.start).getTime();
+      const durationB = new Date(b.end).getTime() - new Date(b.start).getTime();
+      return durationA - durationB; // Fastest (shortest duration) first
+    });
+    res.json(sortedRuns);
   } catch (error) {
     res.status(500).json({ error: 'Server Error' });
   }
